@@ -33,8 +33,8 @@ class RegisteredUserController extends Controller
             'nama_ibu' => ['required', 'string'],
             'alamat' => ['required', 'string'],
             'no_hp' => ['required', 'string'],
-            'foto' => ['image','mimes:jpeg,png,jpg,gif','max:2048'],
-            
+            'foto' => ['image','mimes:jpeg,png,jpg,gif'],
+
 
             // Validasi untuk form akun
             'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
@@ -43,16 +43,17 @@ class RegisteredUserController extends Controller
         ]);
 
         // Simpan foto ke dalam direktori penyimpanan
-        if ($request->hasFile('foto')) {
-            $foto = $request->file('foto')->store('foto', 'public');
-        } 
-
-        event(new Registered($user = $this->createUser($request->all())));
+        $fotoPath = null;
+        if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
+            $fotoPath = $request->file('foto')->store('foto', 'public');
+        }
+        $user = $this->createUser($request->all(), $fotoPath);  // Kirim $fotoPath ke createUser
+        event(new Registered($user));
 
         return $this->registered($request, $user);
     }
 
-    protected function createUser(array $data)
+    protected function createUser(array $data, $fotoPath)
     {
         // Buat pengguna dalam tabel users
         $user = User::create([
@@ -65,22 +66,22 @@ class RegisteredUserController extends Controller
             'user_id' => $user->id,
             'nama' => $data['nama'],
             'tempat_lahir' => $data['tempat_lahir'],
-            'tanggal_lahir' => $data['tanggal_lahir'],            
+            'tanggal_lahir' => $data['tanggal_lahir'],
             'jenis_kelamin' => $data['jenis_kelamin'],
             'sekolah_id' => $data['sekolah_id'],
             'nama_ayah' => $data['nama_ayah'],
             'nama_ibu' => $data['nama_ibu'],
             'alamat' => $data['alamat'],
             'no_hp' => $data['no_hp'],
-            'foto' => $data['foto'],
+            'foto' => $fotoPath,
         ]);
 
         // Buat token untuk pengguna yang baru didaftarkan
-        $token = $user->createToken('api-token');        
+        $token = $user->createToken('api-token');
 
         return $user;
     }
-    
+
     protected function registered(Request $request, $user)
     {
         if ($user) {
@@ -104,5 +105,5 @@ class RegisteredUserController extends Controller
         }
     }
 
-    
+
 }

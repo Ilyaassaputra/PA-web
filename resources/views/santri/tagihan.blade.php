@@ -44,7 +44,7 @@
                                 <select class="form-control" id="bulan" name="bulan">
                                     <option value="">Pilih Bulan</option>
                                     <?php
-                                    
+
                                     for ($i = 0; $i < 12; $i++) {
                                     $AmbilNamaBulan = strtotime(sprintf('%d months', $i));
                                     $LabelBulan     = date('F', $AmbilNamaBulan);
@@ -65,7 +65,7 @@
                                     <input type="text" class="form-control" name="nominal_tagihan"
                                         id="nominal_tagihan" placeholder="Nominal" readonly>
                                     <div class="input-group-append">
-                                      
+
                                         <a href="{{ route('editindex') }}" class="btn btn-outline-primary btn-md"
                                             style="margin-left: 10px;">
                                                 <i class="fas fa-edit"></i></a>

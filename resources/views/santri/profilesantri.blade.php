@@ -34,8 +34,8 @@
                         <div class="col mt-5">
                             <div class="card-body">
                                 <div class="d-flex flex-column align-items-center text-center">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin"
-                                        class="rounded-circle" width="150">
+                                    <img src="{{ asset("{$data_pendaftars->foto}") }}"
+                                        class="img-thumbnail" width="150">
 
                                 </div>
                             </div>
@@ -50,14 +50,14 @@
                                     </div>
                                     <br>
                                     <div class="row">
-                                       
+
                                         <div class="col-sm-3">
                                             <h4>Nama Lengkap</h4>
                                         </div>
                                         <div class="col-sm-9">
                                             <h4>: {{ $data_pendaftars->nama }}</h4>
                                         </div>
-                                   
+
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-3">
@@ -131,7 +131,7 @@
                                             <h4>: {{ $data_pendaftars->no_hp }}</h4>
                                         </div>
                                     </div>
-                                     
+
                                     <br>
 
                                 </div>
@@ -139,7 +139,7 @@
 
                         </div>
                     </div>
-                </div>             
+                </div>
             </div>
         </div>
     </div>

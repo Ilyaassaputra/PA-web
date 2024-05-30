@@ -75,7 +75,7 @@ class DataPendaftarController extends Controller
             'nama_ibu' => ['required', 'string'],
             'alamat' => ['required', 'string'],
             'no_hp' => ['required', 'string'],
-            'foto' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'foto' => ['image', 'mimes:jpeg,png,jpg,gif'],
 
 
         ]);
@@ -106,7 +106,7 @@ class DataPendaftarController extends Controller
             'nama_ibu' => $request['nama_ibu'],
             'alamat' => $request['alamat'],
             'no_hp' => $request['no_hp'],
-            'foto' => $request['foto'],
+            'foto' => $fotoPath,
         ]);
 
         return redirect('datapendaftar');
@@ -176,8 +176,8 @@ class DataPendaftarController extends Controller
     }
     public function destroy($id)
     {
-        $dataPendaftar = DataPendaftar::with('user')->findOrFail($id); 
-        $user = $dataPendaftar->user; 
+        $dataPendaftar = DataPendaftar::with('user')->findOrFail($id);
+        $user = $dataPendaftar->user;
 
         if (!$dataPendaftar) {
             return redirect()->route('datapendaftar')->with('error', 'Data pendaftar tidak ditemukan');
@@ -187,15 +187,15 @@ class DataPendaftarController extends Controller
 
         try {
             if ($dataPendaftar) {
-                $dataPendaftar->delete(); 
+                $dataPendaftar->delete();
             }
 
-            $user->delete(); 
-            DB::commit(); 
+            $user->delete();
+            DB::commit();
 
             return redirect()->route('datapendaftar')->with('success', 'Data pendaftar dan user berhasil dihapus');
         } catch (\Exception $e) {
-            DB::rollback(); 
+            DB::rollback();
             return redirect()->route('datapendaftar')->with('error', 'Gagal menghapus data pendaftar dan user: ' . $e->getMessage());
         }
     }

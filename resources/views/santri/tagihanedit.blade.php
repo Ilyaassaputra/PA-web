@@ -36,23 +36,17 @@
                             @foreach ($jenisTagihan as $jenis)
                                 <div class="form-group">
                                     <label for="nominal_tagihan{{ $jenis->id }}">{{ $jenis->jenis_tagihan }}</label>
-                                    <input type="number" class="form-control" name="nominal_tagihan"
+                                    <input type="number" class="form-control" name="nominal_tagihan[{{ $jenis->id }}]"
                                         id="nominal_tagihan{{ $jenis->id }}"
-                                        value="{{ old('nominal_tagihan', $jenis->nominal_tagihan) }}" required autofocus
+                                        value="{{ old('nominal_tagihan.' . $jenis->id, $jenis->nominal_tagihan) }}" required autofocus
                                         autocomplete="username">
                                 </div>
-                                {{-- <div class="form-group">
-                    <label for="nominal_tagihan{{ $jenis->id }}">{{ $jenis->jenis_tagihan }}</label>
-                    <input type="number" class="form-control" id="nominal_tagihan{{ $jenis->id }}"
-                        name="nominal_tagihan[{{ $jenis->id }}]" value="{{ $jenis->nominal_tagihan }}" required>
-                </div> --}}
                             @endforeach
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3 mr-2">
                                 <button type="submit" class="btn btn-primary btn-md mr-2">Simpan</button>
                                 <button type="button" class="btn btn-secondary btn-md"
                                     onclick="history.back();">Kembali</button>
                             </div>
-
                         </form>
                     </div>
                 </div>

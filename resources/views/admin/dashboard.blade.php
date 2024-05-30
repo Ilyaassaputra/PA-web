@@ -152,8 +152,21 @@
                                                     method="post">
                                                     @csrf
                                                     <button type="submit"
-                                                        class="btn btn-success btn-sm">Konfirmasi</button>
+                                                        class="btn btn-success btn-sm mr-2">Konfirmasi</button>
                                                 </form>
+                                                <form
+                                                        action="{{ route('destroy.pendaftar', ['id' => $pendaftar->id]) }}"
+                                                        data-confirm-delete="true" method="post">
+                                                        @csrf
+                                                        @method('DELETE')
+
+                                                        <button type="submit" id="deleted"
+                                                            class="btn btn-danger btn-sm " data-confirm-delete="true">
+                                                            Tolak
+                                                            {{-- <i class="fas fa-trash"></i> --}}
+                                                        </button>
+
+                                                    </form>
 
                                             </div>
                                         </td>
@@ -170,8 +183,8 @@
         </div>
     </div>
 
-   
-       
+
+
      @section('script')
         <script>
             $('#add-row').DataTable({

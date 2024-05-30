@@ -28,7 +28,6 @@
                                 Tambah Data
                             </a>
                         </div>
-                       
                     </div>
                     <div class="card-body">
 

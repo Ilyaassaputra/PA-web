@@ -99,15 +99,28 @@
                 <li class="nav-item dropdown hidden-caret">
                     <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false">
                         <div class="avatar-sm">
-                            <img src="../assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle">
+                            @if (Auth::user() && Auth::user()->DataPendaftar && Auth::user()->DataPendaftar->foto)
+                                <img src="{{ asset(Auth::user()->DataPendaftar->foto) }}" alt="Profile Image"
+                                    class="avatar-img rounded-circle">
+                            @else
+                                <img src="../assets/img/profile.jpg" alt="Default Image"
+                                    class="avatar-img rounded-circle">
+                            @endif
                         </div>
                     </a>
                     <ul class="dropdown-menu dropdown-user animated fadeIn">
                         <div class="dropdown-user-scroll scrollbar-outer">
                             <li>
                                 <div class="user-box">
-                                    <div class="avatar-lg"><img src="../assets/img/profile.jpg" alt="image profile"
-                                            class="avatar-img rounded"></div>
+                                    <div class="avatar-lg">
+                                        @if (Auth::user() && Auth::user()->DataPendaftar && Auth::user()->DataPendaftar->foto)
+                                        <img src="{{ asset(Auth::user()->DataPendaftar->foto) }}" alt="image profile"
+                                            class="avatar-img rounded">
+                                            @else
+                                            <img src="../assets/img/profile.jpg" alt="Default Image"
+                                            class="avatar-img rounded">
+                                            @endif
+                                    </div>
                                     <div class="u-text">
                                         <h4>{{ optional(Auth::user())->username }}</h4>
                                         <p class="text-muted">{{ optional(Auth::user())->email }}</p>

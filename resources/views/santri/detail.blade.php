@@ -34,8 +34,8 @@
                         <div class="col mt-5">
                             <div class="card-body">
                                 <div class="d-flex flex-column align-items-center text-center">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin"
-                                        class="rounded-circle" width="150">
+                                    <img src="{{ asset("{$data_santri->foto}") }}"
+                                        class="img-thumbnail" width="150">
 
                                 </div>
                             </div>
@@ -201,7 +201,7 @@
                                                 <div class="modal-content">
                                                     <div class="modal-header no-bd">
                                                         <h3 class="modal-title">
-                                                            Tambah Pembayaran 
+                                                            Tambah Pembayaran
                                                         </h3>
                                                         <button type="button" class="close" data-dismiss="modal"
                                                             aria-label="Close">
