@@ -123,7 +123,7 @@
                                                     method="POST">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                                    <button type="submit" class="btn btn-danger btn-sm delete-button">Hapus</button>
                                                 </form>
                                             </td>
                                         </tr>

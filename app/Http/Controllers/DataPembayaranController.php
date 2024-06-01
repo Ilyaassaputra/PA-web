@@ -6,6 +6,7 @@ use App\Models\DataSantri;
 use App\Models\DataTagihan;
 use Illuminate\Http\Request;
 use App\Models\DataPembayaran;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class DataPembayaranController extends Controller
 {
@@ -52,7 +53,8 @@ class DataPembayaranController extends Controller
         $tagihan->save();
 
         // Redirect atau response sesuai kebutuhan
-        return redirect()->back()->with('success', 'Pembayaran berhasil.');
+        Alert::success('Pembayaran Berhasil');
+        return redirect()->back();
     }
 
 

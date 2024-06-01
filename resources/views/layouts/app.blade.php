@@ -35,6 +35,7 @@
     {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link href="{{ asset('sweetalert2/sweetalert2.min.css') }}" rel="stylesheet">
+
     <link rel="stylesheet" href="{{ asset('../assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('../assets/css/atlantis.min.css') }}">
     <link rel="stylesheet" href="{{ asset('../assets/css/simple-line-icons.css') }}">
@@ -101,10 +102,48 @@
 
     <!-- Sweet Alert -->
     <script src="{{ asset('../assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
     <!-- Atlantis JS -->
     <script src="{{ asset('../assets/js/atlantis.min.js') }}"></script>
-  
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteButtons = document.querySelectorAll('.delete-button');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const form = this.closest('form');
+
+                    Swal.fire({
+                        title: 'Apakah Anda yakin?',
+                        text: "Data ini tidak dapat dikembalikan!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                            Swal.fire({
+                                title: 'Dihapus!',
+                                text: 'Data berhasil dihapus.',
+                                icon: 'success'
+                            });
+                        } else if (result.dismiss === Swal.DismissReason.cancel) {
+                            Swal.fire({
+                                title: 'Dibatalkan',
+                                text: 'Data batal dihapus.',
+                                icon: 'error'
+                            });
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 
     @yield('script')
 </body>

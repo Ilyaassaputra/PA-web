@@ -85,7 +85,7 @@
                                                         @method('DELETE')
 
                                                         <button type="submit" id="deleted"
-                                                            class="btn btn-danger btn-sm" data-confirm-delete="true">
+                                                            class="btn btn-danger btn-sm delete-button" data-confirm-delete="true">
                                                             Tolak
                                                             {{-- <i class="fas fa-trash"></i> --}}
                                                         </button>
@@ -113,5 +113,6 @@
                 "pageLength": 10,
             })
         </script>
+
     @endsection
 </x-app-layout>

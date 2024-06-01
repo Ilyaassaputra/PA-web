@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Models\DataPendaftar;
 use App\Models\DataPembayaran;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 use function PHPUnit\Framework\returnSelf;
 
 class SantriController extends Controller
@@ -22,8 +23,8 @@ class SantriController extends Controller
         $data_pendaftars = DataPendaftar::where('user_id', auth()->id())->first();
         $user = User::where('id', $data_pendaftars->user_id)->first();
         $daftarSekolah = ListSekolah::all();
-        
-        
+
+
 
         return view('santri.profilesantri', compact('user', 'data_pendaftars', 'daftarSekolah'));
     }
@@ -84,7 +85,7 @@ class SantriController extends Controller
         ]);
 
 
-
-        return redirect()->route('santri.detail', $santriId)->with('success', 'Pembayaran berhasil ditambahkan.');
+        Alert::success('Pembayaran berhasil ditambahkan');
+        return redirect()->route('santri.detail', $santriId);
     }
 }

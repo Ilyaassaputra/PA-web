@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use RealRashid\SweetAlert\Facades\Alert;
 
 
 class DataPendaftarController extends Controller
@@ -80,37 +81,42 @@ class DataPendaftarController extends Controller
 
         ]);
 
-        // Simpan foto ke dalam direktori penyimpanan
-        $fotoPath = null;
-        if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
-            $fotoPath = $request->file('foto')->store('foto', 'public');
+        try {
+            // Simpan foto ke dalam direktori penyimpanan
+            $fotoPath = null;
+            if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
+                $fotoPath = $request->file('foto')->store('foto', 'public');
+            }
+
+
+            // Buat pengguna dalam tabel users
+            $user = User::create([
+                'username' => $request['username'],
+                'email' => $request['email'],
+                'password' => Hash::make($request['password']),
+
+            ]);
+
+            $pendaftar = DataPendaftar::create([
+                'user_id' => $user->id,
+                'nama' => $request['nama'],
+                'tempat_lahir' => $request['tempat_lahir'],
+                'tanggal_lahir' => $request['tanggal_lahir'],
+                'jenis_kelamin' => $request['jenis_kelamin'],
+                'sekolah_id' => $request['sekolah_id'],
+                'nama_ayah' => $request['nama_ayah'],
+                'nama_ibu' => $request['nama_ibu'],
+                'alamat' => $request['alamat'],
+                'no_hp' => $request['no_hp'],
+                'foto' => $fotoPath,
+            ]);
+
+            Alert::success('Berhasil', 'Data Berhasil Ditambah');
+            return redirect('datapendaftar');
+        } catch (\Exception $e) {
+            Alert::error('Gagal', 'Data Gagal Ditambah');
+            return redirect('datapendaftar');
         }
-
-
-        // Buat pengguna dalam tabel users
-        $user = User::create([
-            'username' => $request['username'],
-            'email' => $request['email'],
-            'password' => Hash::make($request['password']),
-
-        ]);
-
-        $pendaftar = DataPendaftar::create([
-            'user_id' => $user->id,
-            'nama' => $request['nama'],
-            'tempat_lahir' => $request['tempat_lahir'],
-            'tanggal_lahir' => $request['tanggal_lahir'],
-            'jenis_kelamin' => $request['jenis_kelamin'],
-            'sekolah_id' => $request['sekolah_id'],
-            'nama_ayah' => $request['nama_ayah'],
-            'nama_ibu' => $request['nama_ibu'],
-            'alamat' => $request['alamat'],
-            'no_hp' => $request['no_hp'],
-            'foto' => $fotoPath,
-        ]);
-
-        return redirect('datapendaftar');
-        return $user;
     }
 
     public function uploadBuktiPembayaran(Request $request)
@@ -131,8 +137,8 @@ class DataPendaftarController extends Controller
             'status' => 2,
             'bukti_pembayaran' => $buktiPembayaran,
         ]);
-
-        return redirect()->route('dashboard')->with('success', 'Bukti pembayaran berhasil diupload.');
+        Alert::success('Bukti Pembayaran Berhasil Diupload', 'Tunggu hingga admin melakukan konfirmasi');
+        return redirect()->route('dashboard');
     }
 
     public function konfirmasiPendaftar($id)
@@ -140,7 +146,8 @@ class DataPendaftarController extends Controller
         $dataPendaftar = DataPendaftar::findOrFail($id);
 
         if ($dataPendaftar->status != 2) {
-            return redirect()->route('datapendaftar')->with('error', 'Pembayaran pendaftaran belum dikonfirmasi.');
+            Alert::error('Gagal', 'Pendaftar Belum Melakukan Pembayaran.');
+            return redirect()->route('datapendaftar');
         }
         // Mencari user berdasarkan nama
 
@@ -151,36 +158,43 @@ class DataPendaftarController extends Controller
         ]);
 
         // Proses konfirmasi dan pindah ke data santri
-        DB::transaction(function () use ($dataPendaftar) {
-            $dataSantri = DataSantri::create([
-                'nama' => $dataPendaftar->nama,
-                'tempat_lahir' => $dataPendaftar->tempat_lahir,
-                'tanggal_lahir' => $dataPendaftar->tanggal_lahir,
-                'jenis_kelamin' => $dataPendaftar->jenis_kelamin,
-                'sekolah_id' => $dataPendaftar->sekolah_id,
-                'nama_ayah' => $dataPendaftar->nama_ayah,
-                'nama_ibu' => $dataPendaftar->nama_ibu,
-                'alamat' => $dataPendaftar->alamat,
-                'no_hp' => $dataPendaftar->no_hp,
-                'foto' => $dataPendaftar->foto,
-                'status' => 'aktif',
-                'data_pendaftar_id' => $dataPendaftar->id,
-            ]);
+        try {
+            DB::transaction(function () use ($dataPendaftar) {
+                $dataSantri = DataSantri::create([
+                    'nama' => $dataPendaftar->nama,
+                    'tempat_lahir' => $dataPendaftar->tempat_lahir,
+                    'tanggal_lahir' => $dataPendaftar->tanggal_lahir,
+                    'jenis_kelamin' => $dataPendaftar->jenis_kelamin,
+                    'sekolah_id' => $dataPendaftar->sekolah_id,
+                    'nama_ayah' => $dataPendaftar->nama_ayah,
+                    'nama_ibu' => $dataPendaftar->nama_ibu,
+                    'alamat' => $dataPendaftar->alamat,
+                    'no_hp' => $dataPendaftar->no_hp,
+                    'foto' => $dataPendaftar->foto,
+                    'status' => 'aktif',
+                    'data_pendaftar_id' => $dataPendaftar->id,
+                ]);
 
-            $user = $dataPendaftar->user;
-            $user->role = 'santri';
-            $user->save();
-        });
-
-        return redirect()->route('datasantri');
+                $user = $dataPendaftar->user;
+                $user->role = 'santri';
+                $user->save();
+            });
+            Alert::success('Berhasil', 'Pendaftaran berhasil dikonfirmasi.');
+            return redirect()->route('datapendaftar');
+        } catch (\Exception $e) {
+            Alert::error('Gagal', 'Pendaftaran gagal dikonfirmasi.');
+            return redirect()->route('datapendaftar');
+        }
     }
+
     public function destroy($id)
     {
         $dataPendaftar = DataPendaftar::with('user')->findOrFail($id);
         $user = $dataPendaftar->user;
 
         if (!$dataPendaftar) {
-            return redirect()->route('datapendaftar')->with('error', 'Data pendaftar tidak ditemukan');
+            Alert::error('Data Pendaftar Tidak Ditemukan.');
+            return redirect()->route('datapendaftar');
         }
 
         DB::beginTransaction();

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\JenisTagihan;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class JenisTagihanController extends Controller
 {
@@ -26,7 +28,8 @@ class JenisTagihanController extends Controller
         }
 
         // Redirect setelah update untuk menghindari double submission
-        return redirect()->route('editindex')->with('success', 'Nominal tagihan berhasil diubah.');
+        Alert::success('Berhasil', 'Nominal Tagihan Berhasil Diubah');
+        return redirect()->route('editindex');
     }
 
 }
