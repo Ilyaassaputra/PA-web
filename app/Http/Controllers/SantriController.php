@@ -60,6 +60,7 @@ class SantriController extends Controller
 
     public function addPayment(Request $request, $santriId)
     {
+
         $request->validate([
             'bukti_transfer' => 'nullable|file|mimes:jpeg,png,pdf|max:2048', // Buat bukti_transfer opsional
 

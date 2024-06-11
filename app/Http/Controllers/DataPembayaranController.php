@@ -20,8 +20,8 @@ class DataPembayaranController extends Controller
 
     public function bayar(Request $request, $tagihanId)
     {
-        // $data = $request->all();
-        // dd($data, $tagihanId);
+        $data = $request->all();
+
         $request->validate([
             'metode' => 'required', // Pastikan metode pembayaran terisi
             'bukti_pembayaran' => 'nullable|file|mimes:jpeg,png,pdf|max:2048', // Buat bukti_pembayaran opsional
