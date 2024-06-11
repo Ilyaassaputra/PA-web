@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\api\ApiSantriController;
+use App\Http\Controllers\api\ApiTagihanController;
 use App\Http\Controllers\api\LaporanController;
 use App\Http\Controllers\api\LoginController;
 use Illuminate\Http\Request;
@@ -46,3 +48,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::get('cari', [LaporanController::class, 'getData']);
 Route::post('loginMobile', [LoginController::class, 'loginApi']);
+
+// API TAGIHAN
+Route::post('buat-tagihan', [ApiTagihanController::class, 'store']);
+Route::post('getDataNominal', [ApiTagihanController::class, 'getDataNominal']);
+// SANTRI
+Route::post('getDataSantriByNamed', [ApiSantriController::class, 'getDataSantriByNamed']);
+Route::post('getDataSantriById', [ApiSantriController::class, 'getDataSantriById']);
+Route::post('bayar', [ApiSantriController::class, 'bayar']);
