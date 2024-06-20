@@ -27,16 +27,14 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex align-items-center">
-                            <h4 class="card-title"> Detail Santri</h4>
+                            <h4 class="card-title">Detail Santri</h4>
                         </div>
                     </div>
                     <div class="row gutters-sm">
                         <div class="col mt-5">
                             <div class="card-body">
                                 <div class="d-flex flex-column align-items-center text-center">
-                                    <img src="{{ asset("{$data_santri->foto}") }}"
-                                        class="img-thumbnail" width="150">
-
+                                    <img src="{{ asset("{$data_santri->foto}") }}" class="img-thumbnail" width="150">
                                 </div>
                             </div>
                         </div>
@@ -130,17 +128,15 @@
                                         </div>
                                     </div>
                                     <br>
-
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex align-items-center">
-                            <h4 class="card-title"> Data Pembayaran Santri</h4>
+                            <h4 class="card-title">Data Pembayaran Santri</h4>
                         </div>
                     </div>
                     <div class="card-body">
@@ -149,10 +145,12 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Bulan</th>
+                                        <th>Bulan / Tahun Ajaran</th>
                                         <th>Jenis Tagihan</th>
-                                        <th>Nominal</th>
+                                        <th>Nominal (Rp)</th>
                                         <th>Status</th>
+                                        <th>Jumlah Dibayar (Rp)</th>
+                                        <th>Sisa Pembayaran (Rp)</th>
                                         <th>Tanggal Pembayaran</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -170,31 +168,46 @@
                                                 @endif
                                             </td>
                                             <td>{{ $tagihan->JenisTagihan->jenis_tagihan }}</td>
-                                            <td>{{ $tagihan->nominal_tagihan }}</td>
-                                            <td><span
-                                                    class="{{ $tagihan->status_pembayaran === 'Sudah Bayar' ? 'badge  bg-success text-light ' : 'badge  bg-danger text-light' }} badge">{{ $tagihan->status_pembayaran }}</span>
+                                            <td>{{ number_format($tagihan->nominal_tagihan, 2) }}</td>
+                                            <td>
+                                                <span
+                                                    class="{{ $tagihan->status_pembayaran === 'Sudah Bayar' ? 'badge bg-success text-light' : ($tagihan->status_pembayaran === 'Cicilan' ? 'badge bg-warning text-dark' : 'badge bg-danger text-light') }} badge">
+                                                    {{ $tagihan->status_pembayaran }}
+                                                </span>
                                             </td>
                                             <td>
                                                 @if ($tagihan->pembayaran)
-                                                    {{ $tagihan->pembayaran->created_at->format('d F Y') }}
+                                                    {{ number_format($tagihan->pembayaran()->latest()->first()->jumlah_dibayar, 2) }}
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                            @if ($tagihan->status_pembayaran === 'Cicilan' && $tagihan->pembayaran()->exists())
+                                                <td>{{ number_format($tagihan->pembayaran()->latest()->first()->sisa_pembayaran, 2) }}
+                                                </td>
+                                            @else
+                                                <td>-</td>
+                                            @endif
+                                            <td>
+                                                @if ($tagihan->pembayaran)
+                                                    {{ $tagihan->pembayaran()->latest()->first()->created_at->format('d/m/Y') }}
                                                 @else
                                                     -
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($tagihan->status_pembayaran === 'Belum Bayar')
-                                                    {{-- {{ route('show-bayar-form', $tagihan->id) }} --}}
-                                                    <button class="btn btn-primary btn-sm" data-toggle="modal"
-                                                        data-target="#bayar{{ $tagihan->id }}"
-                                                        data-tagihan-id="{{ $tagihan->id }}">
-                                                        Bayar
-                                                    </button>
-                                                @elseif ($tagihan->status_pembayaran === 'Sudah Bayar')
-                                                    <button class="btn btn-primary btn-sm">cetak bukti</button>
-                                                @endif
+                                                <button class="btn btn-primary btn-sm" data-toggle="modal"
+                                                    data-target="#bayar{{ $tagihan->id }}"
+                                                    data-tagihan-id="{{ $tagihan->id }}">
+                                                    Bayar
+                                                </button>
+                                                <button class="btn btn-primary btn-sm" data-toggle="modal"
+                                                    data-target="#modalCetak{{ $tagihan->id }}">
+                                                    Detail
+                                                </button>
                                             </td>
                                         </tr>
-                                        <!-- Modal -->
+                                        <!-- Modal Bayar-->
                                         <div class="modal fade" id="bayar{{ $tagihan->id }}" tabindex="-1"
                                             role="dialog" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
@@ -218,30 +231,111 @@
                                                                     <div class="form-group">
                                                                         <label for="metode">Metode Pembayaran</label>
                                                                         <select class="form-control" id="metode"
-                                                                            name="metode">
-                                                                            <option value="">Metode Pembayaran
-                                                                            </option>
-                                                                            <option value="Cash"> Cash</option>
+                                                                            name="metode"
+                                                                            onchange="toggleInstallmentInput(this.value, {{ $tagihan->id }})">
+                                                                            <option value="">Pilih Metode
+                                                                                Pembayaran</option>
+                                                                            <option value="Cash">Cash</option>
                                                                             <option value="Transfer">Transfer Bank
                                                                             </option>
+                                                                            <option value="Cicil">Cicil</option>
                                                                         </select>
                                                                     </div>
+                                                                    <div class="form-group"
+                                                                        id="installmentInput{{ $tagihan->id }}"
+                                                                        style="display: none;">
+                                                                        <label for="jumlah_dibayar">Jumlah yang
+                                                                            Dibayarkan</label>
+                                                                        <input type="number" class="form-control"
+                                                                            id="jumlah_dibayar" name="jumlah_dibayar"
+                                                                            min="1" step="0.01">
+                                                                    </div>
+                                                                    @if ($tagihan->status_pembayaran === 'Cicilan' && $tagihan->pembayaran()->exists())
+                                                                        <div class="form-group">
+                                                                            <label for="sisa_pembayaran">Sisa
+                                                                                Pembayaran</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="sisa_pembayaran"
+                                                                                value="{{ number_format($tagihan->pembayaran()->latest()->first()->sisa_pembayaran, 2) }}"
+                                                                                readonly>
+                                                                        </div>
+                                                                    @endif
+
                                                                     <div class="form-group">
-                                                                        <label for="bukti_transfer">Unggah Bukti</label>
+                                                                        <label for="bukti_transfer">Unggah
+                                                                            Bukti</label>
                                                                         <input type="file" class="form-control"
                                                                             name="bukti_transfer" id="bukti_transfer">
                                                                     </div>
                                                                     <div
                                                                         class="d-grid gap-2 d-md-flex justify-content-md-end mt-4 mr-2">
-                                                                        <button class="btn btn-primary btn-sm "
+                                                                        <button class="btn btn-primary btn-sm"
                                                                             type="submit">Simpan</button>
                                                                     </div>
                                                                 </div>
-
                                                             </div>
                                                         </form>
                                                     </div>
-
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Modal Cetak -->
+                                        <div class="modal fade" id="modalCetak{{ $tagihan->id }}" tabindex="-1"
+                                            role="dialog" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title"><strong>Riwayat Pembayaran</strong></h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Jumlah Tagihan:
+                                                            {{ number_format($tagihan->nominal_tagihan, 2) }}</p>
+                                                        <p>Tanggal Pembayaran:
+                                                            @if ($tagihan->pembayaran()->exists())
+                                                                {{ $tagihan->pembayaran()->latest()->first()->created_at->format('d/m/Y') }}
+                                                            @else
+                                                                Belum ada data pembayaran
+                                                            @endif
+                                                        </p>
+                                                        <p>Metode Pembayaran:
+                                                            @if ($tagihan->pembayaran()->exists())
+                                                                {{ $tagihan->pembayaran()->latest()->first()->metode }}
+                                                            @else
+                                                                Belum ada data pembayaran
+                                                            @endif
+                                                        </p>
+                                                        <p>Bukti Pembayaran :</p>
+                                                        @if ($tagihan->pembayaran()->exists())
+                                                            <img src="{{ asset("{$tagihan->pembayaran()->first()->bukti_transfer}") }}" class="img-fluid cursor-pointer" alt="Bukti Pembayaran">
+                                                        @else
+                                                        -
+                                                        @endif
+                                                        <h5>History Pembayaran cicilan</h5>
+                                                        @if ($tagihan->pembayaran()->exists())
+                                                            @foreach ($tagihan->pembayaran()->get() as $pembayaran)
+                                                                <p>Tanggal Pembayaran:
+                                                                    {{ $pembayaran->created_at->format('d/m/Y') }} -
+                                                                    {{ number_format($pembayaran->jumlah_dibayar, 2) }}
+                                                                </p>
+                                                                <p>Sisa Pembayaran:
+                                                                    {{ number_format($pembayaran->sisa_pembayaran, 2) }}
+                                                                </p>
+                                                            @endforeach
+                                                        @else
+                                                            <p>Belum ada history pembayaran cicilan.</p>
+                                                        @endif
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary btn-sm"
+                                                            data-dismiss="modal">Tutup</button>
+                                                        <!-- Tombol untuk mencetak modal -->
+                                                        <button type="button" class="btn btn-primary btn-sm"
+                                                            onclick="cetakBukti('modalCetak{{ $tagihan->id }}')">Cetak</button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -250,13 +344,30 @@
                             </table>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        function cetakBukti(modalId) {
+            var printContents = document.getElementById(modalId).innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+        }
+    </script>
+    <script>
+        function toggleInstallmentInput(value, tagihanId) {
+            var installmentInput = document.getElementById('installmentInput' + tagihanId);
+            if (value === 'Cicil') {
+                installmentInput.style.display = 'block';
+            } else {
+                installmentInput.style.display = 'none';
+            }
+        }
+    </script>
 
-    </div>
     @section('script')
         <script>
             $('#add-row').DataTable({

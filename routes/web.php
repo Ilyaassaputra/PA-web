@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    
+
     Route::get('admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::get('search', [SantriController::class, 'searchSantri'])->name('santri.search');
     Route::get('/santri/detail/{id}', [SantriController::class, 'show'])->name('santri.detail');
     Route::get('/profilesantri', [SantriController::class, 'profile'])->name('profilesantri');
+    Route::get('santri/history/{id}', [SantriController::class, 'history'])->name('santri.history');
     Route::post('/santri/add-payment/{id}', [SantriController::class, 'addPayment'])->name('santri.addPayment');
 
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');

@@ -95,7 +95,7 @@
                     <div class="card-header">
                         <div class="d-flex align-items-center">
                             <h4 class="card-title">Laporan Pembayaran</h4>
-                            <a href="" class="btn btn-primary btn-md  ml-auto">
+                            <a href="javascript:void(0)" id="btn-print" class="btn btn-primary btn-md  ml-auto">
                                 <i class="icon-printer"></i>
                                 Print
                             </a>
@@ -143,7 +143,7 @@
                                             <td>{{ $data->pembayaran ? $data->pembayaran->metode : '-' }}</td>
                                             <td>
                                                 @if ($data->pembayaran)
-                                                    {{ $data->pembayaran->created_at->format('d F Y') }}
+                                                    {{ $data->pembayaran->created_at->format('d/m/Y') }}
                                                 @else
                                                     -
                                                 @endif
@@ -162,9 +162,6 @@
             </div>
         </div>
     </div>
-
-
-
 
     @section('script')
         <script>
@@ -222,12 +219,12 @@
                         $('#add-row').DataTable().destroy();
                         if (response.data.length == 0) {
                             $('#alert-kosong').html(`
-                            <br>
-                            <center>
-                                <h3>Tidak ada data pembayaran untuk periode yang dipilih.</h3>
-                            </center>
-                            <br>
-                            `);
+                        <br>
+                        <center>
+                            <h3>Tidak ada data pembayaran untuk periode yang dipilih.</h3>
+                        </center>
+                        <br>
+                        `);
                             $('#data-laporan').html('');
                         } else {
                             let html = '';
@@ -241,8 +238,6 @@
                                     let bulanan = elementOrValue1.bulan + ' ' +
                                         tahun;
                                     let daftar_ulang = elementOrValue1.thn_ajaran;
-
-
 
                                     if (elementOrValue1.jenis_tagihan
                                         .jenis_tagihan == 'Bulanan') {
@@ -289,8 +284,6 @@
                                             '</td>';
                                         html += '</tr>';
                                     }
-
-
                                 });
 
                                 $('#alert-kosong').html('');
@@ -300,7 +293,6 @@
                         }
 
                         $('#add-row').DataTable()
-
                     }
                 });
             });
@@ -324,9 +316,31 @@
 
                 return dateString;
             }
+
+            // Fungsi untuk mencetak tabel
+            function printTable() {
+                var printContents = document.getElementById('add-row').outerHTML;
+                var printWindow = window.open('', '', 'height=500, width=800');
+
+                printWindow.document.write('<html><head><title>Print Laporan Pembayaran</title>');
+                printWindow.document.write('<style>');
+                printWindow.document.write('table { width: 100%; border-collapse: collapse; }');
+                printWindow.document.write('th, td { border: 1px solid black; padding: 8px; text-align: left; }');
+                printWindow.document.write('</style></head><body>');
+                printWindow.document.write('<h1>Laporan Pembayaran</h1>');
+                printWindow.document.write('<table>' + printContents + '</table>');
+                printWindow.document.write('</body></html>');
+
+                printWindow.document.close();
+                printWindow.print();
+            }
+
+            // Tambahkan event listener untuk tombol print
+            document.getElementById('btn-print').addEventListener('click', printTable);
+
             $('#add-row').DataTable({
                 "pageLength": 10,
-            })
+            });
         </script>
     @endsection
 

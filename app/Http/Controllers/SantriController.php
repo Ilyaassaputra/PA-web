@@ -19,15 +19,29 @@ class SantriController extends Controller
 {
     public function profile()
     {
-
         $data_pendaftars = DataPendaftar::where('user_id', auth()->id())->first();
+
+        if (!$data_pendaftars) {
+            // Handle the case when there is no data_pendaftars found
+            return redirect()->back()->withErrors('Data pendaftar tidak ditemukan.');
+        }
+
         $user = User::where('id', $data_pendaftars->user_id)->first();
+        $santris = DataSantri::where('data_pendaftar_id', $data_pendaftars->id)->get(); // Ambil data santri yang sesuai dengan data pendaftar
         $daftarSekolah = ListSekolah::all();
 
+        $dataTagihan = collect(); // Default to an empty collection
 
+        if ($santris->isNotEmpty()) {
+            $dataTagihan = DataTagihan::where('santri_id', $santris->first()->id)->orderBy('created_at', 'desc')->get(); // Ambil data tagihan sesuai dengan santri yang login
+        }
 
-        return view('santri.profilesantri', compact('user', 'data_pendaftars', 'daftarSekolah'));
+        return view('santri.profilesantri', compact('user', 'santris', 'data_pendaftars', 'daftarSekolah', 'dataTagihan'));
     }
+
+
+
+
     public function index()
     {
         $daftarSekolah = ListSekolah::all();
@@ -42,11 +56,24 @@ class SantriController extends Controller
     {
         $daftarSekolah = ListSekolah::all();
         $data_santri = DataSantri::findOrFail($id);
-        $dataTagihan = DataTagihan::where('santri_id', $id)->get();
+        $dataTagihan = DataTagihan::where('santri_id', $id)->orderBy('created_at', 'desc')->get();
         $jenis_tagihan = JenisTagihan::all();
+
 
         return view('santri.detail', compact('data_santri', 'daftarSekolah', 'dataTagihan', 'jenis_tagihan'));
     }
+
+    public function history($id)
+    {
+        $daftarSekolah = ListSekolah::all();
+        $data_santri = DataSantri::findOrFail($id);
+        $dataTagihan = DataTagihan::where('santri_id', $id)->orderBy('created_at', 'desc')->get();
+        $jenis_tagihan = JenisTagihan::all();
+        $data_pembayaran = DataPembayaran::all();
+
+        return view('santri.history', compact('data_santri', 'daftarSekolah', 'dataTagihan', 'jenis_tagihan', 'data_pembayaran'));
+    }
+
 
     public function searchSantri(Request $request)
     {

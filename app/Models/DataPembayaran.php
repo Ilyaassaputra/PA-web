@@ -17,7 +17,8 @@ class DataPembayaran extends Model
         'nominal_tagihan',
         'metode',
         'bukti_transfer',
-
+        'jumlah_dibayar',
+        'sisa_pembayaran',
     ];
 
 

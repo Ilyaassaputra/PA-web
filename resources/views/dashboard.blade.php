@@ -20,6 +20,7 @@
                     <div class="card full-height">
                         <div class="card-body">
                             <div class="card-title">Unggah Bukti Pembayaran</div>
+                            <p>Silahkan melakukan pembayaran pendaftaran</p>
                             <div class="d-flex flex-wrap mt-4 ">
 
                                 <form method="POST"
@@ -60,65 +61,7 @@
             </div>
         </div>
     @elseif ($data_pendaftars->status === '3')
-        <div class="page-inner mt-3">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                    <div class="card-header">
-                        <div class="d-flex align-items-center">
-                            <h4 class="card-title"> Data Pembayaran Santri</h4>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="add-row" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Bulan / Tahun Ajaran</th>
-                                        <th>Jenis Tagihan</th>
-                                        <th>Nominal</th>
-                                        <th>Status</th>
-                                        <th>Tanggal Pembayaran</th>
 
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php $no = 1; ?>
-                                    @foreach ($dataTagihan as $tagihan)
-                                        <tr>
-                                            <td>{{ $no++ }}</td>
-                                            <td>
-                                                @if ($tagihan->jenis_tagihan_id == '1')
-                                                    {{ $tagihan->bulan }} {{ $tagihan->created_at->format('Y') }}
-                                                @elseif ($tagihan->jenis_tagihan_id == '2')
-                                                    {{ $tagihan->thn_ajaran }}
-                                                @endif
-                                            </td>
-                                            <td>{{ $tagihan->JenisTagihan->jenis_tagihan }}</td>
-                                            <td>{{ $tagihan->nominal_tagihan }}</td>
-                                            <td><span
-                                                    class="{{ $tagihan->status_pembayaran === 'Sudah Bayar' ? 'badge  bg-success text-light ' : 'badge  bg-danger text-light' }} badge">{{ $tagihan->status_pembayaran }}</span>
-                                            </td>
-                                            <td>
-                                                @if ($tagihan->pembayaran)
-                                                    {{ $tagihan->pembayaran->created_at->format('d F Y') }}
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
-
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                </div>
-                </div>
-            </div>
-        </div>
     @endif
     @section('script')
         <script>

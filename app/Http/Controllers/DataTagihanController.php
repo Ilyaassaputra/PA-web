@@ -14,17 +14,21 @@ class DataTagihanController extends Controller
 {
     public function index()
     {
+        // Ambil data tagihan dengan id terkecil untuk setiap kelompok bulan dan tahun ajaran
         $dataTagihan = DB::table('data_tagihans')
-            ->select('bulan', 'thn_ajaran', DB::raw('MIN(id) as min_id'))
-            ->groupBy('bulan', 'thn_ajaran')
-            ->get();
+        ->select('bulan', 'thn_ajaran', DB::raw('MIN(id) as min_id'))
+        ->groupBy('bulan', 'thn_ajaran')
+        ->orderBy('min_id', 'desc') // Urutkan berdasarkan id terkecil secara descending (terbaru)
+        ->get();
 
         $dataTagihanDetail = collect([]);
 
         foreach ($dataTagihan as $tagihan) {
+            // Ambil detail tagihan dengan id terkecil dari hasil query sebelumnya
             $detail = DataTagihan::with('JenisTagihan')
-                ->where('id', $tagihan->min_id)
+            ->where('id', $tagihan->min_id)
                 ->first();
+
             if ($detail) {
                 $dataTagihanDetail->push($detail);
             }
@@ -34,6 +38,7 @@ class DataTagihanController extends Controller
 
         return view('santri.tagihan', compact('dataTagihan', 'jenis_tagihan', 'dataTagihanDetail'));
     }
+
 
 
     public function store(Request $request)

@@ -56,8 +56,12 @@
                             <!-- Form untuk jenis pembayaran Daftar Ulang -->
                             <div class="form-group" id="form_daftar_ulang" style="display: none;">
                                 <label for="thn_ajaran">Tahun Ajaran</label>
-                                <input type="text" class="form-control" name="thn_ajaran" id="thn_ajaran"
-                                    placeholder="Tahun">
+                                <select class="form-control" id="thn_ajaran" name="thn_ajaran">
+                                <option value="">Pilih Tahun Ajaran</option>
+                                <option value="2024/2025">2024/2025</option>
+                                <option value="2025/2026">2025/2026</option>
+                                <option value="2026/2027">2026/2027</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="nominal_tagihan">Nominal Tagihan</label>
