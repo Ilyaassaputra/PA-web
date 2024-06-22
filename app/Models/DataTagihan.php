@@ -29,7 +29,7 @@ class DataTagihan extends Model
 
     public function jenisTagihan()
     {
-        return $this->belongsTo(JenisTagihan::class, 'jenis_tagihan_id');
+        return $this->belongsTo(JenisTagihan::class, 'jenis_tagihan_id', 'id');
     }
 
     public function pembayaran()

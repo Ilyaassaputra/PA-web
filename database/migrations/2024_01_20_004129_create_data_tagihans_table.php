@@ -17,8 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('jenis_tagihan_id')->nullable();
             $table->string('bulan')->nullable();
             $table->string('thn_ajaran')->nullable();
-            $table->decimal('nominal_tagihan', 15, 2);            
-            $table->enum('status_pembayaran', ['Belum Bayar', 'Sudah Bayar'])->default('Belum Bayar');
+            $table->decimal('nominal_tagihan', 15, 2);
+            $table->string('status_pembayaran');
             $table->timestamps();
 
             $table->foreign('santri_id')->references('id')->on('data_santris');

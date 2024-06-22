@@ -41,7 +41,7 @@ class DataSantri extends Model
 
     public function sekolah()
     {
-        return $this->belongsTo(ListSekolah::class);
+        return $this->belongsTo(ListSekolah::class, 'sekolah_id', 'id');
     }
 
     public function pembayaran()

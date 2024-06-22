@@ -70,11 +70,16 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/tagihan', [DataTagihanController::class, 'index'])->name('tagihan');
     Route::post('/add-tagihan', [DataTagihanController::class, 'store']);
+    // routes/web.php
+    Route::get('/tagihan/{id}/detail', [DataTagihanController::class, 'show'])->name('tagihan.detail');
     Route::delete('tagihan/{batch_id}', [DataTagihanController::class, 'destroy'])->name('tagihan.destroy');
 
 
     Route::get('/pembayaran/{tagihanId}', [DataPembayaranController::class, 'showBayarForm'])->name('show-bayar-form');
     Route::post('/pembayaran/{tagihanId}', [DataPembayaranController::class, 'bayar'])->name('bayar');
+    // web.php
+
+
 
     Route::get('/tagihanedit/edit', [JenisTagihanController::class, 'index'])->name('editindex');
     Route::post('/tagihanedit/update', [JenisTagihanController::class, 'update'])->name('tagihanedit.update');

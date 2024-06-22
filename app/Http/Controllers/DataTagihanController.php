@@ -7,6 +7,8 @@ use App\Models\DataTagihan;
 use Illuminate\Support\Str;
 use App\Models\JenisTagihan;
 use Illuminate\Http\Request;
+use App\Services\TwilioService;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -39,9 +41,15 @@ class DataTagihanController extends Controller
         return view('santri.tagihan', compact('dataTagihan', 'jenis_tagihan', 'dataTagihanDetail'));
     }
 
+    // app/Http/Controllers/TagihanController.php
+    public function show($id)
+    {
+        $tagihan = DataTagihan::with('pembayaran')->findOrFail($id);
+        return view('santri.detailpembayaran', compact('tagihan'));
+    }
 
 
-    public function store(Request $request)
+    public function store(Request $request, TwilioService $twilio)
     {
 
         $dataSantri = DataSantri::all();
@@ -56,6 +64,9 @@ class DataTagihanController extends Controller
                 'nominal_tagihan' => $request->nominal_tagihan,
                 'batch_id' => $batchId,  // Menyimpan batch_id yang sama untuk setiap tagihan dalam satu batch
             ]);
+
+            $message = "Tagihan baru telah dibuat untuk bulan " . $request->bulan . " dengan nominal " . $request->nominal_tagihan;
+            $twilio->sendSms($santri->no_hp, $message);
         }
         Alert::success('Berhasil', 'Tagihan Baru berhasil ditambahkan');
         return redirect()->route('tagihan');

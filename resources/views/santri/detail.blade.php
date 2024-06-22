@@ -201,10 +201,7 @@
                                                     data-tagihan-id="{{ $tagihan->id }}">
                                                     Bayar
                                                 </button>
-                                                <button class="btn btn-primary btn-sm" data-toggle="modal"
-                                                    data-target="#modalCetak{{ $tagihan->id }}">
-                                                    Detail
-                                                </button>
+                                                <a href="{{ route('tagihan.detail', $tagihan->id) }}" class="btn btn-primary btn-sm">Detail</a>
                                             </td>
                                         </tr>
                                         <!-- Modal Bayar-->
@@ -285,7 +282,8 @@
                                             <div class="modal-dialog modal-dialog-centered" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title"><strong>Riwayat Pembayaran</strong></h5>
+                                                        <h5 class="modal-title"><strong>Riwayat Pembayaran</strong>
+                                                        </h5>
                                                         <button type="button" class="close" data-dismiss="modal"
                                                             aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
@@ -310,10 +308,27 @@
                                                         </p>
                                                         <p>Bukti Pembayaran :</p>
                                                         @if ($tagihan->pembayaran()->exists())
-                                                            <img src="{{ asset("{$tagihan->pembayaran()->first()->bukti_transfer}") }}" class="img-fluid cursor-pointer" alt="Bukti Pembayaran">
+                                                            @php
+                                                                $hasBuktiTransfer = false;
+                                                            @endphp
+                                                            @foreach ($tagihan->pembayaran as $pembayaran)
+                                                                @if (isset($pembayaran->bukti_transfer) && $pembayaran->bukti_transfer)
+                                                                    <img src="{{ asset("{$pembayaran->bukti_transfer}")}}"
+                                                                        class="img-fluid cursor-pointer"
+                                                                        alt="Bukti Pembayaran">
+                                                                    @php
+                                                                        $hasBuktiTransfer = true;
+                                                                    @endphp
+                                                                @endif
+                                                            @endforeach
+                                                            @if (!$hasBuktiTransfer)
+                                                                -
+                                                            @endif
                                                         @else
-                                                        -
+                                                            -
                                                         @endif
+
+
                                                         <h5>History Pembayaran cicilan</h5>
                                                         @if ($tagihan->pembayaran()->exists())
                                                             @foreach ($tagihan->pembayaran()->get() as $pembayaran)

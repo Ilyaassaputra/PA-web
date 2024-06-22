@@ -19,7 +19,7 @@ class ApiSantriController extends Controller
         $data['message'] = false;
 
         try {
-            $data['data'] = DataSantri::with('tagihans')->where('nama', 'like', '%' . $request->nama_santri . '%')->get();
+            $data['data'] = DataSantri::with('tagihans', 'sekolah')->where('nama', 'like', '%' . $request->nama_santri . '%')->get();
 
             $data['message'] = true;
             return response()->json([
@@ -40,7 +40,7 @@ class ApiSantriController extends Controller
         $data['message'] = false;
 
         try {
-            $data['data'] = DataSantri::with('tagihans')->where('id', $request->id)->first();
+            $data['data'] = DataSantri::with(['tagihans', 'tagihans.jenisTagihan'])->where('id', $request->id)->first();
 
             $data['message'] = true;
             return response()->json([
